@@ -16,7 +16,7 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers
 )
-model = load_model('sequential-model.h5')
+model = load_model('sequential-model-2.h5')
 
 @app.get("/api/simulatePoints")
 async def  simulate_points(latitude: float, longitude: float):
