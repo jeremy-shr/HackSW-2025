@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaFireAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
+import { FaMapMarkerAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
 import { FaHouseFire } from "react-icons/fa6";
 import FormModal from "./FormModal";
 
