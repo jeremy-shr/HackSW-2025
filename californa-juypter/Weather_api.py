@@ -1,59 +1,69 @@
 import openmeteo_requests
+
 import requests_cache
 import pandas as pd
 from retry_requests import retry
 
-# Load the dataset
-df = pd.read_csv("cali_fire.csv")
 
-# Convert date column to datetime
-df["Incident Start Date"] = pd.to_datetime(df["Incident Start Date"], errors="coerce")
 
-# Drop rows with missing data
-df_clean = df.dropna(subset=["Latitude", "Longitude", "Incident Start Date"])
+# Setup the Open-Meteo API client with cache and retry on error
+cache_session = requests_cache.CachedSession('.cache', expire_after = -1)
+retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
+openmeteo = openmeteo_requests.Client(session = retry_session)
 
-# Take a small sample for testing
-df_sample = df_clean.head(5)
+# Make sure all required weather variables are listed here
+# The order of variables in hourly or daily is important to assign them correctly below
+url = "https://archive-api.open-meteo.com/v1/archive"
+params = {
+	"latitude": 38.47,
+	"longitude": -122.04,
+	"start_date": "2020-06-06",
+	"end_date": "2020-06-06",
+	"hourly": ["temperature_2m", "relative_humidity_2m", "wind_speed_10m"],
+	"timezone": "America/Los_Angeles"
+}
+responses = openmeteo.weather_api(url, params=params)
 
-# Setup Open-Meteo API client with cache
-cache_session = requests_cache.CachedSession('.cache', expire_after=-1)
-retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
-openmeteo = openmeteo_requests.Client(session=retry_session)
+# Process first location. Add a for-loop for multiple locations or weather models
+response = responses[0]
+print(f"Coordinates {response.Latitude()}°N {response.Longitude()}°E")
+print(f"Elevation {response.Elevation()} m asl")
+print(f"Timezone {response.Timezone()} {response.TimezoneAbbreviation()}")
+print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
 
-# Function to fetch weather data
-def fetch_weather(lat, lon, date):
-    url = "https://archive-api.open-meteo.com/v1/archive"
-    params = {
-        "latitude": lat,
-        "longitude": lon,
-        "start_date": date.strftime("%Y-%m-%d"),
-        "end_date": date.strftime("%Y-%m-%d"),
-        "hourly": ["temperature_2m", "relative_humidity_2m", "wind_speed_10m"],
-        "timezone": "America/Los_Angeles",
-    }
-    try:
-        responses = openmeteo.weather_api(url, params=params)
-        response = responses[0]
-        hourly = response.Hourly()
-        return {
-            "High Temp (°C)": max(hourly.Variables(0).ValuesAsNumpy()),
-            "Low Temp (°C)": min(hourly.Variables(0).ValuesAsNumpy()),
-            "High Humidity (%)": max(hourly.Variables(1).ValuesAsNumpy()),
-            "Low Humidity (%)": min(hourly.Variables(1).ValuesAsNumpy()),
-            "High Wind Speed (m/s)": max(hourly.Variables(2).ValuesAsNumpy()),
-            "Low Wind Speed (m/s)": min(hourly.Variables(2).ValuesAsNumpy()),
-        }
-    except Exception as e:
-        print(f"Error fetching weather for {lat}, {lon} on {date}: {e}")
-        return None
+# Process hourly data. The order of variables needs to be the same as requested.
+hourly = response.Hourly()
+hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
+hourly_relative_humidity_2m = hourly.Variables(1).ValuesAsNumpy()
+hourly_wind_speed_10m = hourly.Variables(2).ValuesAsNumpy()
 
-# Fetch weather data for each row
-weather_results = [fetch_weather(row["Latitude"], row["Longitude"], row["Incident Start Date"]) for _, row in df_sample.iterrows()]
+hourly_data = {"date": pd.date_range(
+	start = pd.to_datetime(hourly.Time(), unit = "s", utc = True),
+	end = pd.to_datetime(hourly.TimeEnd(), unit = "s", utc = True),
+	freq = pd.Timedelta(seconds = hourly.Interval()),
+	inclusive = "left"
+)}
 
-# Create DataFrame and merge
-weather_df = pd.DataFrame(weather_results)
-df_sample_weather = pd.concat([df_sample.reset_index(drop=True), weather_df], axis=1)
+hourly_data["temperature_2m"] = hourly_temperature_2m
+hourly_data["relative_humidity_2m"] = hourly_relative_humidity_2m
+hourly_data["wind_speed_10m"] = hourly_wind_speed_10m
 
-# Save to CSV
-df_sample_weather.to_csv("cali_fire_weather.csv", index=False)
-print("Weather data saved to cali_fire_weather.csv")
+hourly_dataframe = pd.DataFrame(data = hourly_data)
+
+# Find the high and low values for each variable
+high_temp = max(hourly_data["temperature_2m"])
+low_temp = min(hourly_data["temperature_2m"])
+
+high_humidity = max(hourly_data["relative_humidity_2m"])
+low_humidity = min(hourly_data["relative_humidity_2m"])
+
+high_wind_speed = max(hourly_data["wind_speed_10m"])
+low_wind_speed = min(hourly_data["wind_speed_10m"])
+
+# Print results with 1 decimal place
+print(f"High Temperature: {high_temp:.1f}°C, Low Temperature: {low_temp:.1f}°C")
+print(f"High Humidity: {high_humidity:.1f}%, Low Humidity: {low_humidity:.1f}%")
+print(f"High Wind Speed: {high_wind_speed:.1f} m/s, Low Wind Speed: {low_wind_speed:.1f} m/s")
+
+
+
