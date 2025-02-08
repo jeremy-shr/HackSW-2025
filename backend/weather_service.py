@@ -45,7 +45,7 @@ def get_scale_factor(weather_data: dict):
     Get the scale factor based on the weather data
     '''
     # Calculate the scale factor based on the weather data
-    scale_factor = 1.0
+    scale_factor = 0.05
     if weather_data:
         temperature = weather_data.get('temperature', 0)
         humidity = weather_data.get('humidity', 0)
@@ -53,10 +53,21 @@ def get_scale_factor(weather_data: dict):
 
         # Adjust the scale factor based on the weather conditions
         if temperature > 30:
-            scale_factor += 2
-        if humidity > 80:
-            scale_factor += 2
+            scale_factor += 0.03
+        if humidity < 30:
+            scale_factor += 0.03
         if wind_speed > 20:
-            scale_factor += 2
+            scale_factor += 0.03
 
     return scale_factor
+
+if __name__ == '__main__':
+    # Test the weather API
+    lat = 37.7749
+    long = -122.4194
+    weather_data = get_weather(lat, long)
+    print(weather_data)
+
+    # Test the scale factor
+    sf = get_scale_factor(weather_data)
+    print(f"Scale factor: {sf}")
