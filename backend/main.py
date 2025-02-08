@@ -3,6 +3,8 @@ from fastapi import FastAPI
 import numpy as np
 from backend.mapping import mappings
 from backend.input_class import BurnInput
+from backend.burn_simulator_service import generate_geojson_polygon
+from backend.weather_service import get_weather, get_scale_factor
 from tensorflow.keras.models import load_model
 
 # Initialize FastAPI
@@ -11,8 +13,8 @@ app = FastAPI()
 # Load the pre-trained model
 model = load_model('sequential-model.h5')
 
-@app.get("/simulatePoints")
-def simulate_points(latitude: float, longitude: float):
+@app.get("/api/simulatePoints")
+async def  simulate_points(latitude: float, longitude: float):
     '''
     Simulate the points based on the given latitude and longitude
 
@@ -22,10 +24,26 @@ def simulate_points(latitude: float, longitude: float):
 
     returns [geojson] : The simulated simulated 7 circles
     '''
-    # Todo: Implement the simulation logic
-    return {"latitude": latitude, "longitude": longitude}
+    # Get weather api data
+    try:
+        print("here")
+        weather_data = get_weather(latitude, longitude)
+        print("here2")
 
-@app.post("/calculateBurn")
+        scale_factor:int = get_scale_factor(weather_data)
+        print("here3")
+
+        direction:int = int(weather_data['wind_direction'])
+
+        geojson =  generate_geojson_polygon((latitude, longitude), scale_factor, direction)
+        print(geojson)
+
+        return geojson
+    except Exception as e:
+        return {"error": f"An error occurred: {e}"}
+
+
+@app.post("/api/calculateBurn")
 def calculate_burn(input_data: BurnInput):
     """
     Predict the burn classification (damage) based on the input data.
