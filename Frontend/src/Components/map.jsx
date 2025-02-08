@@ -9,8 +9,8 @@ export default function Map() {
 
   // California Boundaries (for fitting the map view)
   const californiaBounds = [
-    [-131, 32], // Southwest corner (bottom-left)
-    [-114.1312, 42.0095] // Northeast corner (top-right)
+    [-138, 32], // Southwest corner (bottom-left)
+    [-103, 43] // Northeast corner (top-right)
   ];
 
   // California center (for the marker)
