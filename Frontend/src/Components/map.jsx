@@ -35,7 +35,7 @@ export default function Map() {
     map.current.fitBounds(californiaBounds, { padding: 50, maxZoom: 20 });
 
     // Add a marker at the center of California
-    new maptilersdk.Marker({ color: "#FF0000" })
+    new maptilersdk.Marker({ color: "#000000" })
       .setLngLat([californiaCenter.lng, californiaCenter.lat])
       .addTo(map.current);
 
