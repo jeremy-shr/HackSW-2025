@@ -19,6 +19,7 @@ export default function Map() {
   // Replace with your actual API key (store in environment variables for security)
   maptilersdk.config.apiKey = "SU349lPP5wocnc0jWRHK";
 
+
   useEffect(() => {
     if (map.current) return; // Prevents multiple map initializations
 
