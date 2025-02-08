@@ -1,13 +1,19 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import * as maptilersdk from "@maptiler/sdk";
+import { useRef, useEffect } from 'react';
+import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
 import californiaGeoJSON from "./cali.json";  // Import JSON directly
 import OverLay from "./OverLay";
 
+// Import your GeoJSON file (adjust the relative path as needed)
+import caliFiresGeojson from '../../data/final_fires.json';
+
 export default function Map() {
   const mapContainer = useRef(null);
   const map = useRef(null);
+  console.log(caliFiresGeojson)
 
   // California Boundaries
   const californiaBounds = [
@@ -40,8 +46,11 @@ export default function Map() {
       .setLngLat([californiaCenter.lng, californiaCenter.lat])
       .addTo(map.current);
 
-    map.current.on("load", () => {
-      // Add California border from imported JSON
+      
+
+
+    // Wait for the map to load before adding the GeoJSON layer
+    map.current.on('load', () => {
       map.current.addSource("california-border", {
         type: "geojson",
         data: californiaGeoJSON,
@@ -54,9 +63,39 @@ export default function Map() {
         paint: {
           "line-color": "#FF5733",
           "line-width": 3,
-        },
+        }}),
+      // Add the GeoJSON source
+      new maptilersdk.Marker()
+        .setLngLat([-122.91147670, 41.5320111609497])
+        .addTo(map.current);
+
+      map.current.addSource('cali_fires', {
+        type: 'geojson',
+        data: caliFiresGeojson
       });
-      
+
+      // Add a fill layer to style the polygons
+      map.current.addLayer({
+        id: 'cali_fires_layer',
+        type: 'fill',
+        source: 'cali_fires',
+        layout: {},
+        paint: {
+          'fill-color': '#FF5733', // Choose your fill color
+          'fill-opacity': 0.5      // Adjust opacity as desired
+        }
+      });
+      // (Optional) Add a line layer to outline the polygons
+      // map.current.addLayer({
+      //   id: 'cali_fires_outline',
+      //   type: 'line',
+      //   source: 'cali_fires',
+      //   layout: {},
+      //   paint: {
+      //     'line-color': '#FF0000',
+      //     'line-width': 2
+      //   }
+      // });
     });
   }, []);
 
