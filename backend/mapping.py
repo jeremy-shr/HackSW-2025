@@ -3,12 +3,12 @@ Mapping for the data
 '''
 mappings = {
     'damage': {
-        0: 'No Damage',
-        1: 'Affected (1-9%)',
-        2: 'Minor (10-25%)',
+        0: 'Minimal Damage (<1%)',
+        1: 'Noticeable Damange (1-9%)',
+        2: 'Minor Damange (10-25%)',
         3: 'Destroyed (>50%)',
-        4: 'Major (26-50%)',
-        5: 'Inaccessible'
+        4: 'Majorly Destroyed (26-50%)',
+        5: 'Totally Destroyed'
     },
     'street_type': {
         0: 'Road',
