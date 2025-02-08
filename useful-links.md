@@ -12,3 +12,6 @@ https://www.fire.ca.gov/what-we-do/fire-resource-assessment-program/fire-perimet
 
 Live (I think) fire and smoke air quality map
 https://fire.airnow.gov/#9.33/37.7947/-122.061
+
+This
+https://data.ca.gov/dataset/california-fire-perimeters-all
