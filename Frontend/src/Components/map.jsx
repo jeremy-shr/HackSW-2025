@@ -25,6 +25,32 @@ export default function Map() {
   // Replace with your actual API key
   maptilersdk.config.apiKey = "SU349lPP5wocnc0jWRHK";
 
+<<<<<<< Updated upstream
+=======
+  const outsideCaliforniaMask = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              // Outer world boundary (Large box covering entire map)
+              [-180, 90],
+              [180, 90],
+              [180, -90],
+              [-180, -90],
+              [-180, 90],
+            ],
+            'https://raw.githubusercontent.com/ropensci/geojsonio/refs/heads/main/inst/examples/california.geojson'
+          ],
+        },
+      },
+    ],
+  };
+
+>>>>>>> Stashed changes
   useEffect(() => {
     if (map.current) return; // Prevent multiple map initializations
 
@@ -44,6 +70,7 @@ export default function Map() {
       .setLngLat([californiaCenter.lng, californiaCenter.lat])
       .addTo(map.current);
 
+<<<<<<< Updated upstream
       
 
 
@@ -95,6 +122,42 @@ export default function Map() {
       //   }
       // });
     });
+=======
+      map.current.on('load', () => {
+        map.current.addSource('california-border', {
+          type: 'geojson',
+          data: 'https://raw.githubusercontent.com/ropensci/geojsonio/refs/heads/main/inst/examples/california.geojson'
+        });
+  
+        map.current.addLayer({
+          id: 'california-border-layer',
+          type: 'line',
+          source: 'california-border',
+          paint: {
+            'line-color': '#FF5733', // Orange color for the border
+            'line-width': 3
+          }
+        });
+
+        map.current.addSource("outside-mask", {
+            type: "geojson",
+            data: outsideCaliforniaMask,
+          });
+    
+          map.current.addLayer({
+            id: "outside-mask-layer",
+            type: "fill",
+            source: "outside-mask",
+            paint: {
+              "fill-color": "#808080", // Gray color outside
+              "fill-opacity": 0.6, // Semi-transparent effect
+            },
+          });
+        
+      });
+      
+
+>>>>>>> Stashed changes
   }, []);
 
   return (
