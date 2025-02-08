@@ -1,3 +1,6 @@
+'''
+Simulator service for generating GeoJSON polygons representing fire spread shapes.
+'''
 import math
 import json
 from shapely.geometry import Polygon, mapping, shape
