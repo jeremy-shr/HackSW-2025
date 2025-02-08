@@ -6,9 +6,16 @@ from backend.input_class import BurnInput
 from backend.burn_simulator_service import generate_nested_geojson_polygons
 from backend.weather_service import get_weather, get_scale_factor
 from tensorflow.keras.models import load_model
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all domains (change this to ["http://localhost:5173"] for security)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
 model = load_model('sequential-model.h5')
 
 @app.get("/api/simulatePoints")
