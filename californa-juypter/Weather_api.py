@@ -5,6 +5,8 @@ import numpy as np
 import time
 from retry_requests import retry
 
+
+
 # Setup the Open-Meteo API client with cache and retry on error
 cache_session = requests_cache.CachedSession('.cache', expire_after=-1)
 retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
@@ -87,9 +89,5 @@ for index, row in df.iterrows():
     except Exception as e:
         print(f"Error fetching data for {latitude}, {longitude}: {e}")
         time.sleep(1) 
-
+        
 print("Data collection complete. All records saved to enhanced_dataset.csv")
-
-
-
-
