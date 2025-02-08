@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FaMapMarkerAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
 import { FaHouseFire } from "react-icons/fa6";
 import FormModal from "./FormModal";
-import WMHB from "./WMHB";
 
 function NavBar() {
   const [openModal, setOpenModal] = useState(false);
