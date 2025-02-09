@@ -63,28 +63,29 @@ function TimeSlider({ yearBounds, setYearBounds }) {
   }, [isPlaying, minYear, maxYear, setYearBounds, setIsPlaying]);
   
 
-  return (
-    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto">
-      <p className="text-gray-800 font-semibold">Select Year Range</p>
+    return (
+      <div className="h-26 absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto drop-shadow-xl">
+        <div className="flex items-center justify-between px-2 space-x-4">
+          <Slider
+            min={minYear}
+            max={maxYear}
+            step={1}
+            value={yearBounds}
+            onChange={handleChange}
+            valueLabelDisplay="auto"
+            valueLabelFormat={(val) => `${val}`}
+            disableSwap
+          />
 
-      <Slider
-        min={minYear}
-        max={maxYear}
-        step={1} // 1 year per step
-        value={yearBounds}
-        onChange={handleChange}
-        valueLabelDisplay="auto"
-        valueLabelFormat={(val) => `${val}`} // Display year
-        disableSwap
-      />
-
-      <div className="mt-2 flex justify-between text-sm text-gray-700">
-        <span>Start Year: {yearBounds[0]}</span>
-        <PlayButton isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
-        <span>End Year: {yearBounds[1]}</span>
+          <PlayButton isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
+        </div>
+    
+        <div className="mt-2 flex justify-between text-sm text-white-700 ">
+          <span>Start Year: {yearBounds[0]}</span>
+          <span>End Year: {yearBounds[1]}</span>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
 export default TimeSlider;

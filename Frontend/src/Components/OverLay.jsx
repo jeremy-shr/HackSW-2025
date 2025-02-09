@@ -6,7 +6,7 @@ import NavBar from "./NavBar";
 
 function OverLay({ addFireMode, setAddFireMode, yearBounds, setYearBounds }) {
   return (
-    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+    <div className="absolute inset-0 flex justify-end items-center pointer-events-none">
       {/* Top-right textbox */}
       <Board />
 
