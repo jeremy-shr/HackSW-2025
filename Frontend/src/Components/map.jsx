@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-
-import * as maptilersdk from '@maptiler/sdk';
+import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
 import californiaGeoJSON from "./cali.json"; // Import JSON directly
@@ -8,22 +7,12 @@ import OverLay from "./OverLay";
 import caliFiresGeojson from "../../data/final_fires.json";
 import pointJson from "./location.json";
 
-function convertPointsToGeoJSON(pointJson) {
-    return {
-      type: "FeatureCollection",
-      features: pointJson.data.map((point) => ({
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [point["Longitude"], point["Latitude"]], // Ensure correct order
-        },
-      })),
-    };
-}
-
 export default function Map() {
+
+  const gradient = ['#371D32', '#88363F', '#F95952', '#F29890', '#ECD2CA']
   const [yearBounds, setYearBounds] = useState([1950, 2024]);
   const [filteredGeojson, setFilteredGeojson] = useState(filterFiresByYear(caliFiresGeojson, yearBounds));
+  const [filteredHouses, setFilteredHouses] = useState(filterHousesByYear(pointJson, yearBounds));
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [addFireMode, setAddFireMode] = useState(false);
@@ -53,8 +42,9 @@ export default function Map() {
       return null;
     }
   };
-  const [showHouses, setShowHouses] = useState(false); // ✅ Toggle for blue dots
+  const [showHouses, setShowHouses] = useState(false); 
 
+  console.log(filteredHouses)
   // California Boundaries
   const californiaBounds = [
     [-138, 32], 
@@ -63,11 +53,10 @@ export default function Map() {
 
   const californiaCenter = { lng: -120, lat: 38 };
 
-  // Replace with your actual API key
   maptilersdk.config.apiKey = "SU349lPP5wocnc0jWRHK";
 
   useEffect(() => {
-    if (map.current) return; 
+    if (map.current) return; // Prevent multiple map initializations
 
     map.current = new maptilersdk.Map({
       container: mapContainer.current,
@@ -91,18 +80,15 @@ export default function Map() {
         const { lng, lat } = event.lngLat;
         console.log("Clicked at: ", lng, lat);
 
-        // Create a custom marker element using the correct path.
         const markerElement = document.createElement("img");
-        markerElement.src = "/3d-fire.png"; // Make sure this image is in your public folder
+        markerElement.src = "/3d-fire.png"; 
         markerElement.style.width = "40px";
         markerElement.style.height = "40px";
 
-        // Create and add a marker using the custom element.
         const newMarker = new maptilersdk.Marker({ element: markerElement })
           .setLngLat([lng, lat])
           .addTo(map.current);
 
-        // Fetch the polygon data based on the click.
         try {
           const polygonData = await requestEndpoint(lng, lat);
 
@@ -120,11 +106,9 @@ export default function Map() {
                     data: polygon
                   });
 
-                  // Get the previous layer ID (so the new one is inserted *before* it)
                   const beforeLayerId =
                     index === 0 ? undefined : `polygon-layer-${lng}-${lat}-${index - 1}`;
 
-                  // Add the polygon layer with `beforeId` to insert it *before* the previous one
                   map.current.addLayer(
                     {
                       id: layerId,
@@ -149,7 +133,6 @@ export default function Map() {
         } catch (error) {
           console.error("Error fetching or processing polygon data:", error);
         }
-        // Store the marker in state (if needed for later reference).
         setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
       }
 
@@ -157,7 +140,7 @@ export default function Map() {
     });
 
 
-    // Wait for the map to load before adding the GeoJSON layer
+
     map.current.on('load', () => {
       map.current.addSource("california-border", {
         type: "geojson",
@@ -176,7 +159,7 @@ export default function Map() {
 
       map.current.addSource("cali_fires", {
         type: "geojson",
-        data: filteredGeojson, 
+        data: filteredGeojson,
       });
 
       map.current.addLayer({
@@ -189,10 +172,43 @@ export default function Map() {
           "fill-opacity": 0.5,
         },
       });
+
+      if (showHouses) {
+        map.current.addSource("locations", {
+          type: "geojson",
+          data: filteredHouses,
+        });
+
+        map.current.addLayer({
+          id: "blue-dots-layer",
+          type: "circle",
+          source: "locations",
+          paint: {
+            "circle-radius": 2, 
+            "circle-color": "#0000FF", 
+            "circle-opacity": 0.8,
+          },
+        });
+      }
     });
   }, []);
 
-  // ✅ Effect to Show/Hide Blue Dots Based on `showHouses`
+  useEffect(() => {
+    const newFilteredGeojson = filterFiresByYear(caliFiresGeojson, yearBounds);
+    setFilteredGeojson(newFilteredGeojson);
+
+    if (map.current && map.current.getSource("cali_fires")) {
+      map.current.getSource("cali_fires").setData(newFilteredGeojson);
+    }
+
+    const newFilteredHouses = filterHousesByYear(pointJson, yearBounds);
+    setFilteredHouses(newFilteredHouses);
+
+    if (map.current && map.current.getSource("locations")) {
+      map.current.getSource("locations").setData(newFilteredHouses);
+    }
+  }, [yearBounds]);
+
   useEffect(() => {
     if (!map.current) return;
 
@@ -200,7 +216,7 @@ export default function Map() {
       if (!map.current.getSource("locations")) {
         map.current.addSource("locations", {
           type: "geojson",
-          data: convertPointsToGeoJSON(pointJson), 
+          data: filteredHouses, 
         });
       }
 
@@ -217,7 +233,6 @@ export default function Map() {
         });
       }
     } else {
-      // ✅ Remove the layer if `showHouses` is false
       if (map.current.getLayer("blue-dots-layer")) {
         map.current.removeLayer("blue-dots-layer");
       }
@@ -225,16 +240,7 @@ export default function Map() {
         map.current.removeSource("locations");
       }
     }
-  }, [showHouses]); // ✅ Runs when `showHouses` changes
-
-  useEffect(() => {
-    const newFilteredGeojson = filterFiresByYear(caliFiresGeojson, yearBounds);
-    setFilteredGeojson(newFilteredGeojson);
-
-    if (map.current && map.current.getSource("cali_fires")) {
-      map.current.getSource("cali_fires").setData(newFilteredGeojson);
-    }
-  }, [yearBounds]);
+  }, [showHouses]); 
 
   return (
     <div className="map-wrap z-10">
@@ -244,7 +250,6 @@ export default function Map() {
   );
 }
 
-// 🔥 Function to filter GeoJSON by year range
 function filterFiresByYear(geojson, yearBounds) {
   const [minYear, maxYear] = yearBounds;
   return {
@@ -254,5 +259,22 @@ function filterFiresByYear(geojson, yearBounds) {
       const fireYear = feature.properties.YEAR_;
       return fireYear >= minYear && fireYear <= maxYear;
     }),
+  };
+}
+
+function filterHousesByYear(pointJson, yearBounds) {
+  const [minYear, maxYear] = yearBounds;
+
+  return {
+    type: "FeatureCollection",
+    features: pointJson.data
+      .filter((point) => point.YEAR_ >= minYear && point.YEAR_ <= maxYear) // ✅ Filter by year
+      .map((point) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [point.Longitude, point.Latitude], // ✅ Ensure correct order: [lng, lat]
+        },
+      })),
   };
 }
