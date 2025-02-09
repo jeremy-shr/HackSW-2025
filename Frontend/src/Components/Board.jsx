@@ -8,20 +8,20 @@ function Board() {
   return (
 
     <>
-      <div className="bg-[<fire_bg>] p-3 rounded shadow-lg w-60 text-black pointer-events-auto">
+      <div className="bg-white p-3 rounded shadow-lg w-60 text-black pointer-events-auto z-20">
         <h1>Wildfire Data</h1>
         <p>
           Visualizing historical fire data from the 1950s to 2025.
         </p>
         <button
           onClick={() => setOpenDataModal(true)}
-          className="bg-blue-500 text-white px-3 py-1 rounded mt-2 shadow-lg hover:bg-blue-600 transition"
+          className="bg-blue-500 text-white px-3 py-1 rounded mt-2 shadow-lg hover:bg-blue-600 transition hover:cursor-pointer"
         >
           About the data
         </button>
       </div>
       {openDataModal && (
-          <InformationModal
+        <InformationModal
           open={openDataModal}
           handleClose={() => setOpenDataModal(false)}
           title="About the data"

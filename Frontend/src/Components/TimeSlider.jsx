@@ -66,12 +66,13 @@ function TimeSlider({ yearBounds, setYearBounds }) {
           onChange={handleChange}
           valueLabelDisplay="auto"
           valueLabelFormat={(val) => `${val}`}
+          style={{ color: "#F95952" }}
           disableSwap
         />
 
         <PlayButton isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
       </div>
-  
+
       <div className="mt-2 flex justify-between text-sm text-white-700 ">
         <span>Start: {yearBounds[0]}</span>
         <span>End: {yearBounds[1]}</span>
