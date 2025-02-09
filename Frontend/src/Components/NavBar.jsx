@@ -3,7 +3,7 @@ import { FaFireAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
 import { FaHouseFire } from "react-icons/fa6";
 import FormModal from "./FormModal";
 
-function NavBar({ setAddFireMode }) {
+function NavBar({ setAddFireMode, addFireMode }) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -11,7 +11,7 @@ function NavBar({ setAddFireMode }) {
 
       {/* Add Fire */}
       <button
-        onClick={() => setAddFireMode(true)}
+        onClick={() => setAddFireMode(!addFireMode)}
         className="flex items-center justify-center w-14 h-14 bg-[#F95952] text-white rounded-full shadow-lg hover:bg-[#c82821] transition"
       >
         <FaFireAlt size={24} />
