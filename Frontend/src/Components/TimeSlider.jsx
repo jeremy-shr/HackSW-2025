@@ -64,7 +64,7 @@ function TimeSlider({ yearBounds, setYearBounds }) {
   
 
     return (
-      <div className="h-26 absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto drop-shadow-xl">
+      <div className="h-26 absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-3 rounded-lg shadow-lg text-center pointer-events-auto drop-shadow-xl">
         <div className="flex items-center justify-between px-2 space-x-4">
           <Slider
             min={minYear}
@@ -81,8 +81,8 @@ function TimeSlider({ yearBounds, setYearBounds }) {
         </div>
     
         <div className="mt-2 flex justify-between text-sm text-white-700 ">
-          <span>Start Year: {yearBounds[0]}</span>
-          <span>End Year: {yearBounds[1]}</span>
+          <span>Start: {yearBounds[0]}</span>
+          <span>End: {yearBounds[1]}</span>
         </div>
       </div>
     );

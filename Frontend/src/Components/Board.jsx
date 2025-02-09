@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import InformationModal from './InformationModal';
+import fire_bg from '../assets/fire_bg.webp';
 
 function Board() {
   const [openDataModal, setOpenDataModal] = useState(false);
 
   return (
     <>
-      <div className="absolute top-5 left-5 bg-white p-3 rounded shadow-lg w-60 text-black pointer-events-auto">
+      <div className="absolute top-5 left-5 bg-[<fire_bg>] p-3 rounded shadow-lg w-60 text-black pointer-events-auto">
         <h1>Wildfire Data</h1>
         <p>
           Visualizing historical fire data from the 1950s to 2025.
