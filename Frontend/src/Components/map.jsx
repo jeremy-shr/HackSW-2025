@@ -42,7 +42,7 @@ export default function Map() {
       return null;
     }
   };
-  const [showHouses, setShowHouses] = useState(false); // ✅ Toggle for blue dots
+  const [showHouses, setShowHouses] = useState(false); 
 
   console.log(filteredHouses)
   // California Boundaries
@@ -53,7 +53,6 @@ export default function Map() {
 
   const californiaCenter = { lng: -120, lat: 38 };
 
-  // Replace with your actual API key
   maptilersdk.config.apiKey = "SU349lPP5wocnc0jWRHK";
 
   useEffect(() => {
@@ -81,18 +80,15 @@ export default function Map() {
         const { lng, lat } = event.lngLat;
         console.log("Clicked at: ", lng, lat);
 
-        // Create a custom marker element using the correct path.
         const markerElement = document.createElement("img");
-        markerElement.src = "/3d-fire.png"; // Make sure this image is in your public folder
+        markerElement.src = "/3d-fire.png"; 
         markerElement.style.width = "40px";
         markerElement.style.height = "40px";
 
-        // Create and add a marker using the custom element.
         const newMarker = new maptilersdk.Marker({ element: markerElement })
           .setLngLat([lng, lat])
           .addTo(map.current);
 
-        // Fetch the polygon data based on the click.
         try {
           const polygonData = await requestEndpoint(lng, lat);
 
@@ -110,11 +106,9 @@ export default function Map() {
                     data: polygon
                   });
 
-                  // Get the previous layer ID (so the new one is inserted *before* it)
                   const beforeLayerId =
                     index === 0 ? undefined : `polygon-layer-${lng}-${lat}-${index - 1}`;
 
-                  // Add the polygon layer with `beforeId` to insert it *before* the previous one
                   map.current.addLayer(
                     {
                       id: layerId,
@@ -139,7 +133,6 @@ export default function Map() {
         } catch (error) {
           console.error("Error fetching or processing polygon data:", error);
         }
-        // Store the marker in state (if needed for later reference).
         setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
       }
 
@@ -148,7 +141,6 @@ export default function Map() {
 
 
 
-    // Wait for the map to load before adding the GeoJSON layer
     map.current.on('load', () => {
       map.current.addSource("california-border", {
         type: "geojson",
@@ -165,7 +157,6 @@ export default function Map() {
         },
       });
 
-      // 🔥 Add Fire Layer
       map.current.addSource("cali_fires", {
         type: "geojson",
         data: filteredGeojson,
@@ -182,7 +173,6 @@ export default function Map() {
         },
       });
 
-      // 🔵 Add House Layer (Initially Hidden)
       if (showHouses) {
         map.current.addSource("locations", {
           type: "geojson",
@@ -203,7 +193,6 @@ export default function Map() {
     });
   }, []);
 
-  // ✅ Effect to update fires & houses dynamically when yearBounds change
   useEffect(() => {
     const newFilteredGeojson = filterFiresByYear(caliFiresGeojson, yearBounds);
     setFilteredGeojson(newFilteredGeojson);
@@ -220,7 +209,6 @@ export default function Map() {
     }
   }, [yearBounds]);
 
-  // ✅ Effect to Show/Hide Blue Dots Based on `showHouses`
   useEffect(() => {
     if (!map.current) return;
 
@@ -245,7 +233,6 @@ export default function Map() {
         });
       }
     } else {
-      // ✅ Remove the layer if `showHouses` is false
       if (map.current.getLayer("blue-dots-layer")) {
         map.current.removeLayer("blue-dots-layer");
       }
@@ -263,7 +250,6 @@ export default function Map() {
   );
 }
 
-// 🔥 Function to filter GeoJSON Fires by Year
 function filterFiresByYear(geojson, yearBounds) {
   const [minYear, maxYear] = yearBounds;
   return {
@@ -276,7 +262,6 @@ function filterFiresByYear(geojson, yearBounds) {
   };
 }
 
-// 🔵 Function to filter Houses (Blue Dots) by Year
 function filterHousesByYear(pointJson, yearBounds) {
   const [minYear, maxYear] = yearBounds;
 
