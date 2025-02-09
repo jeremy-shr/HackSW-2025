@@ -38,8 +38,6 @@ async def  simulate_points(latitude: float, longitude: float):
         direction:int = int(weather_data['wind_direction'])
 
         geojson =  generate_nested_geojson_polygons((latitude, longitude), scale_factor, direction)
-        print(geojson)
-
         return geojson
     except Exception as e:
         return {"error": f"An error occurred: {e}"}
