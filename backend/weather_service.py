@@ -52,12 +52,18 @@ def get_scale_factor(weather_data: dict):
         wind_speed = weather_data.get('wind_speed', 0)
 
         # Adjust the scale factor based on the weather conditions
-        if temperature > 30:
+        if temperature >= 30:
             scale_factor += 0.03
-        if humidity < 30:
+        elif temperature >= 20:
+            scale_factor += 0.02
+        if humidity < 30 and humidity >= 20 :
             scale_factor += 0.03
+        elif humidity < 20:
+            scale_factor += 0.02    
         if wind_speed > 20:
             scale_factor += 0.03
+        elif wind_speed >= 10 and wind_speed < 20:
+            scale_factor += 0.02
 
     return scale_factor
 

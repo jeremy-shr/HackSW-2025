@@ -1,51 +1,87 @@
-import React, { useState } from "react";
-import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
+import PlayButton from "./PlayButton";
 
-function TimeSlider() {
-  const minDate = dayjs("2020-01-01");
-  const maxDate = dayjs("2025-12-31");
-  const minGap = 86400000; // 1 day in milliseconds
+function TimeSlider({ yearBounds, setYearBounds }) {
+  const minYear = 1950;
+  const maxYear = 2025;
+  const minGap = 1; // Minimum 1-year gap
 
-  const [value, setValue] = useState([minDate.valueOf(), maxDate.add(1, "day").valueOf()]);
+  const [isPlaying, setIsPlaying] = useState(false); // Use by play button
 
-  const handleChange = (event, newValue, activeThumb) => {
+  const handleChange = (event, newValue) => {
+    // Ensure newValue is an array (MUI sometimes passes a single value)
+    if (!Array.isArray(newValue)) return;
+
     let [start, end] = newValue;
 
-    // Ensure minimum gap of 1 day
+    // Ensure minimum gap of 1 year
     if (end - start < minGap) {
-      if (activeThumb === 0) {
-        start = end - minGap;
-      } else {
+      if (start === yearBounds[0]) {
         end = start + minGap;
+      } else {
+        start = end - minGap;
       }
     }
 
     // Prevent values from exceeding min/max bounds
-    start = Math.max(start, minDate.valueOf());
-    end = Math.min(end, maxDate.valueOf());
+    start = Math.max(start, minYear);
+    end = Math.min(end, maxYear);
 
-    setValue([start, end]);
+    // ✅ Update the state using setYearBounds
+    setYearBounds([start, end]);
   };
+
+  useEffect(() => {
+    let intervalId;
+  
+    if (isPlaying) {
+      setYearBounds((prevBounds) => {
+        const [start, currentYear] = prevBounds;
+        return currentYear === maxYear ? [minYear, minYear] : prevBounds;
+      });
+  
+      intervalId = setInterval(() => {
+        setYearBounds((prevBounds) => {
+          const [start, currentYear] = prevBounds;
+          if (currentYear < maxYear) {
+            return [start, currentYear + 1];
+          } else {
+            clearInterval(intervalId);
+            setIsPlaying(false);
+            return prevBounds;
+          }
+        });
+      }, 250);
+    }
+  
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isPlaying, minYear, maxYear, setYearBounds, setIsPlaying]);
+  
 
   return (
     <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto">
-      <p className="text-gray-800 font-semibold">Select Date Range</p>
+      <p className="text-gray-800 font-semibold">Select Year Range</p>
 
       <Slider
-        min={minDate.valueOf()}
-        max={maxDate.valueOf()}
-        step={86400000} // 1 day in ms
-        value={value}
+        min={minYear}
+        max={maxYear}
+        step={1} // 1 year per step
+        value={yearBounds}
         onChange={handleChange}
         valueLabelDisplay="auto"
-        valueLabelFormat={(val) => dayjs(val).format("YYYY-MM-DD")}
+        valueLabelFormat={(val) => `${val}`} // Display year
         disableSwap
       />
 
       <div className="mt-2 flex justify-between text-sm text-gray-700">
-        <span>Start: {dayjs(value[0]).format("YYYY-MM-DD")}</span>
-        <span>End: {dayjs(value[1]).format("YYYY-MM-DD")}</span>
+        <span>Start Year: {yearBounds[0]}</span>
+        <PlayButton isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
+        <span>End Year: {yearBounds[1]}</span>
       </div>
     </div>
   );

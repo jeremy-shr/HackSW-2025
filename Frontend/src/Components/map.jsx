@@ -1,15 +1,16 @@
 import { useRef, useEffect, useState } from "react";
+
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
-import californiaGeoJSON from "./cali.json";  // Import JSON directly
+import californiaGeoJSON from "./cali.json"; // Import JSON directly
 import OverLay from "./OverLay";
-
-// Import your GeoJSON file (adjust the relative path as needed)
-import caliFiresGeojson from '../../data/final_fires.json';
+import caliFiresGeojson from "../../data/final_fires.json";
 
 export default function Map() {
   const gradient = ['#371D32', '#88363F', '#F95952', '#F29890', '#ECD2CA']
+  const [yearBounds, setYearBounds] = useState([1950, 2024]);
+  const [filteredGeojson, setFilteredGeojson] = useState(filterFiresByYear(caliFiresGeojson, yearBounds));
   const mapContainer = useRef(null);
   const [count, setCount] = useState(0);
   const map = useRef(null);
@@ -54,7 +55,6 @@ export default function Map() {
       maxZoom: 15,
     });
 
-    // Fit California bounds on load
     map.current.fitBounds(californiaBounds, { padding: 50, maxZoom: 20 });
 
     // map.current.on('click', function (e) {
@@ -149,73 +149,53 @@ export default function Map() {
         paint: {
           "line-color": "#FF5733",
           "line-width": 3,
-        }
-      }),
-        // Add the GeoJSON source
-        new maptilersdk.Marker()
-          .setLngLat([-122.91147670, 41.5320111609497])
-          .addTo(map.current);
-
-      map.current.addSource('cali_fires', {
-        type: 'geojson',
-        data: caliFiresGeojson
-      });
-
-
-
-      // Add a fill layer to style the polygons
-      map.current.addLayer({
-        id: 'cali_fires_layer',
-        type: 'fill',
-        source: 'cali_fires',
-        layout: {},
-        paint: {
-          'fill-color': '#FF5733', // Choose your fill color
-          'fill-opacity': 0.5      // Adjust opacity as desired
-        }
-      });
-    });
-
-    map.current.on('load', () => {
-      map.current.addSource('california-border', {
-        type: 'geojson',
-        data: 'https://raw.githubusercontent.com/ropensci/geojsonio/refs/heads/main/inst/examples/california.geojson'
-      });
-
-      map.current.addLayer({
-        id: 'california-border-layer',
-        type: 'line',
-        source: 'california-border',
-        paint: {
-          'line-color': '#FF5733', // Orange color for the border
-          'line-width': 3
-        }
-      });
-
-      map.current.addSource("outside-mask", {
-        type: "geojson",
-        data: outsideCaliforniaMask,
-      });
-
-      map.current.addLayer({
-        id: "outside-mask-layer",
-        type: "fill",
-        source: "outside-mask",
-        paint: {
-          "fill-color": "#808080", // Gray color outside
-          "fill-opacity": 0.6, // Semi-transparent effect
         },
       });
 
+      map.current.addSource("cali_fires", {
+        type: "geojson",
+        data: filteredGeojson, // Use filtered data
+      });
+      map.current.addLayer({
+        id: "cali_fires_layer",
+        type: "fill",
+        source: "cali_fires",
+        layout: {},
+        paint: {
+
+          "fill-color": "#FF5733",
+          "fill-opacity": 0.5,
+        },
+      });
     });
-
-
   }, []);
+
+  useEffect(() => {
+    const newFilteredGeojson = filterFiresByYear(caliFiresGeojson, yearBounds);
+    setFilteredGeojson(newFilteredGeojson);
+
+    if (map.current && map.current.getSource("cali_fires")) {
+      map.current.getSource("cali_fires").setData(newFilteredGeojson);
+    }
+  }, [yearBounds]);
 
   return (
     <div className="map-wrap z-10">
       <div ref={mapContainer} className="map" />
-      <OverLay setAddFireMode={setAddFireMode} addFireMode={addFireMode} />
-    </div>
+      <OverLay setAddFireMode={setAddFireMode} addFireMode={addFireMode} yearBounds={yearBounds} setYearBounds={setYearBounds} />
+     </div>
   );
+}
+
+// 🔥 Function to filter GeoJSON by year range
+function filterFiresByYear(geojson, yearBounds) {
+  const [minYear, maxYear] = yearBounds;
+  return {
+    type: "FeatureCollection",
+    name: geojson.name,
+    features: geojson.features.filter((feature) => {
+      const fireYear = feature.properties.YEAR_;
+      return fireYear >= minYear && fireYear <= maxYear;
+    }),
+  };
 }
