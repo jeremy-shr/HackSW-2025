@@ -227,9 +227,7 @@ function FormModal({ open, handleClose }) {
   return (
     <Modal open={open} onClose={handleClose} aria-labelledby="form-modal">
       <Box sx={style}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Select Options
-        </Typography>
+        <Button sx={{color: "red"}}>Will My House Burn?</Button>
 
         {/* Age Input Field */}
         <TextField
