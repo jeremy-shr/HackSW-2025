@@ -56,41 +56,25 @@ function TimeSlider({ yearBounds, setYearBounds }) {
   }, [isPlaying, setYearBounds]);
 
   return (
-    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto drop-shadow-xl">
-      <p className="text-[#FF3B30] font-semibold">Select Year Range</p>
-
-      {/* 🎨 Styled Slider */}
-      <Slider
-        min={minYear}
-        max={maxYear}
-        step={1}
-        value={yearBounds}
-        onChange={handleChange}
-        valueLabelDisplay="auto"
-        valueLabelFormat={(val) => `${val}`}
-        disableSwap
-        sx={{
-          color: "#FF3B30", 
-          '& .MuiSlider-thumb': {
-            backgroundColor: "#FF3B30", // Thumb color
-            boxShadow: "0px 0px 10px rgba(255, 59, 48, 0.5)", // Glowing effect
-          },
-          '& .MuiSlider-track': {
-            backgroundColor: "#FF3B30", // Track color
-          },
-          '& .MuiSlider-rail': {
-            backgroundColor: "#FFC1BC", // Light reddish rail
-          },
-        }}
-      />
-
-      <div className="mt-2 flex justify-between text-sm text-gray-700">
-        <div className="bg-white/30 px-3 py-1 rounded-lg shadow-md text-[#FF3B30]">{yearBounds[0]}</div>
+    <div className="h-26 absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-3 rounded-lg shadow-lg text-center pointer-events-auto drop-shadow-xl">
+      <div className="flex items-center justify-between px-2 space-x-4">
+        <Slider
+          min={minYear}
+          max={maxYear}
+          step={1}
+          value={yearBounds}
+          onChange={handleChange}
+          valueLabelDisplay="auto"
+          valueLabelFormat={(val) => `${val}`}
+          disableSwap
+        />
 
         <PlayButton isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
-
-        <div className="bg-white/30 px-3 py-1 rounded-lg shadow-md text-[#FF3B30]">{yearBounds[1]}</div>
->>>>>>> 551ba16fe1ec0356cdf32a9750ca627b42cab120
+      </div>
+  
+      <div className="mt-2 flex justify-between text-sm text-white-700 ">
+        <span>Start: {yearBounds[0]}</span>
+        <span>End: {yearBounds[1]}</span>
       </div>
     </div>
   );
