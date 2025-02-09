@@ -3,11 +3,20 @@ import { FaMapMarkerAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
 import { FaHouseFire } from "react-icons/fa6";
 import FormModal from "./FormModal";
 
-function NavBar() {
+function NavBar({ setAddFireMode }) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
     <div className="fixed bottom-5 right-5 flex flex-col gap-4 z-50 pointer-events-auto">
+
+      {/* Add Fire */}
+      <button
+        onClick={() => setAddFireMode(true)}
+        className="flex items-center justify-center w-14 h-14 bg-[#F95952] text-white rounded-full shadow-lg hover:bg-[#c82821] transition"
+      >
+        <FaFireAlt size={24} />
+      </button>
+
       {/* Marker Icon (Opens Modal) */}
 
       <button
