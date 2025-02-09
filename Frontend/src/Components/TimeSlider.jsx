@@ -93,6 +93,12 @@ function TimeSlider({ yearBounds, setYearBounds }) {
     <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/20 backdrop-blur-md w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto border border-white/30">
   <p className="text-[#FF3B30] font-semibold">Select Year Range</p>
 
+=======
+  return (
+    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-white/20 backdrop-blur-md w-3/5 p-4 rounded-lg shadow-lg text-center pointer-events-auto border border-white/30">
+  <p className="text-[#FF3B30] font-semibold">Select Year Range</p>
+
+>>>>>>> Stashed changes
   {/* 🎨 Styled Slider */}
   <Slider
     min={minYear}
