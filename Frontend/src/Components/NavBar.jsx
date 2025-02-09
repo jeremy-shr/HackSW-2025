@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaMapMarkerAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
 import { FaHouseFire } from "react-icons/fa6";
 import FormModal from "./FormModal";
+import WMHB from "./WMHB";
 
 function NavBar({ setAddFireMode }) {
   const [openModal, setOpenModal] = useState(false);
@@ -18,6 +19,7 @@ function NavBar({ setAddFireMode }) {
       </button>
 
       {/* Marker Icon (Opens Modal) */}
+
       <button
         onClick={() => setOpenModal(true)}
         className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"

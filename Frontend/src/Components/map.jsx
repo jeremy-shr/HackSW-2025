@@ -106,7 +106,7 @@ export default function Map() {
                     source: sourceId,
                     layout: {},
                     paint: {
-                      "fill-color": gradient[index % gradient.length], // Cycle colors
+                      "fill-color": gradient[index], // Cycle colors
                       "fill-opacity": 0.5,
                     },
                   },
@@ -135,8 +135,6 @@ export default function Map() {
     new maptilersdk.Marker({ color: "#000000" })
       .setLngLat([californiaCenter.lng, californiaCenter.lat])
       .addTo(map.current);
-
-
     // Wait for the map to load before adding the GeoJSON layer
     map.current.on('load', () => {
       map.current.addSource("california-border", {
@@ -177,6 +175,41 @@ export default function Map() {
         }
       });
     });
+
+    map.current.on('load', () => {
+      map.current.addSource('california-border', {
+        type: 'geojson',
+        data: 'https://raw.githubusercontent.com/ropensci/geojsonio/refs/heads/main/inst/examples/california.geojson'
+      });
+
+      map.current.addLayer({
+        id: 'california-border-layer',
+        type: 'line',
+        source: 'california-border',
+        paint: {
+          'line-color': '#FF5733', // Orange color for the border
+          'line-width': 3
+        }
+      });
+
+      map.current.addSource("outside-mask", {
+        type: "geojson",
+        data: outsideCaliforniaMask,
+      });
+
+      map.current.addLayer({
+        id: "outside-mask-layer",
+        type: "fill",
+        source: "outside-mask",
+        paint: {
+          "fill-color": "#808080", // Gray color outside
+          "fill-opacity": 0.6, // Semi-transparent effect
+        },
+      });
+
+    });
+
+
   }, []);
 
   return (
