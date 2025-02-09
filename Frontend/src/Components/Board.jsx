@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import InformationModal from './InformationModal';
-import fire_bg from '../assets/fire_bg.webp';
 
 function Board() {
   const [openDataModal, setOpenDataModal] = useState(false);
@@ -8,6 +7,7 @@ function Board() {
   return (
 
     <>
+      <div className="p-3 rounded shadow-lg w-60 text-white pointer-events-auto bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-3 rounded-lg pointer-events-auto drop-shadow-xl ">
       <div className="bg-white p-3 rounded shadow-lg w-60 text-black pointer-events-auto z-20">
         <h1>Wildfire Data</h1>
         <p>
@@ -15,8 +15,7 @@ function Board() {
         </p>
         <button
           onClick={() => setOpenDataModal(true)}
-          className="bg-blue-500 text-white px-3 py-1 rounded mt-2 shadow-lg hover:bg-blue-600 transition hover:cursor-pointer"
-        >
+          className="text-white mt-2 shadow-lg hover:underline transition">
           About the data
         </button>
       </div>
