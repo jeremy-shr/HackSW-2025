@@ -2,7 +2,7 @@ import React from 'react'
 
 function Board() {
   return (
-    <div className="absolute top-5 left-5 bg-white p-3 rounded shadow-lg w-60 pointer-events-auto">
+    <div className="bg-white p-3 rounded shadow-lg w-60 pointer-events-auto z-20">
       <input
         type="text"
         placeholder="Enter text..."

@@ -1,43 +1,44 @@
 import React, { useState } from "react";
 import { FaFireAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
-import { FaHouseFire } from "react-icons/fa6";
+import { FaHouseFire, FaBuildingCircleExclamation } from "react-icons/fa6";
 import FormModal from "./FormModal";
+import { Tooltip } from "react-tooltip";
 
 
 function NavBar({ setAddFireMode, addFireMode, setShowHouses }) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
-    <div className="fixed bottom-5 right-5 flex flex-col gap-4 z-50 pointer-events-auto">
-
-      {/* Add Fire */}
+    <div className="flex gap-4 z-50 pointer-events-auto">
       <button
+        data-tooltip-id="addFire"
         onClick={() => setAddFireMode(!addFireMode)}
-        className="flex items-center justify-center w-14 h-14 bg-[#F95952] text-white rounded-full shadow-lg hover:bg-[#c82821] transition"
-      >
+        className={`flex items-center justify-center w-14 h-14 ${addFireMode ? 'bg-[#c82821] border-3 border-white' : 'bg-[#F95952]'
+          } text-white rounded-full shadow-lg hover:bg-[#c82821] transition hover:cursor-pointer`}>
         <FaFireAlt size={24} />
       </button>
+      <Tooltip id="addFire" effect="solid" place="bottom" content="Simulate Fire Spread" />
 
       {/* Marker Icon (Opens Modal) */}
 
       <button
+        data-tooltip-id="willBurn"
         onClick={() => setOpenModal(true)}
-        className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
+        className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition hover:cursor-pointer"
       >
         <FaHouseFire size={24} />
       </button>
+      <Tooltip id="willBurn" effect="solid" place="bottom" content="How Will My House Burn?" />
 
       {/* Search Icon */}
-      <button 
-      onClick={() => setShowHouses(prev => !prev)}
-      className="flex items-center justify-center w-14 h-14 bg-gray-700 text-white rounded-full shadow-lg hover:bg-gray-800 transition">
-        <FaSearch size={24} />
-      </button>
+      <button
+        data-tooltip-id="addHouses"
 
-      {/* Layers Icon */}
-      <button className="flex items-center justify-center w-14 h-14 bg-gray-700 text-white rounded-full shadow-lg hover:bg-gray-800 transition">
-        <FaLayerGroup size={24} />
+        onClick={() => setShowHouses(prev => !prev)}
+        className="flex items-center justify-center w-14 h-14 bg-[#e4b90c] text-white rounded-full shadow-lg hover:bg-[#F5890A] transition hover:cursor-pointer">
+        <FaBuildingCircleExclamation size={24} />
       </button>
+      <Tooltip id="addHouses" effect="solid" place="bottom" content="Toggle Structure Damage" />
 
       {/* 🔥 Modal */}
       <FormModal open={openModal} handleClose={() => setOpenModal(false)} />
