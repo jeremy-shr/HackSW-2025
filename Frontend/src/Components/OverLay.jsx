@@ -4,7 +4,7 @@ import Board from "./Board";
 import NavBar from "./NavBar";
 
 
-function OverLay({ addFireMode, setAddFireMode, yearBounds, setYearBounds }) {
+function OverLay({ addFireMode, setAddFireMode, yearBounds, setYearBounds, showHouses, setShowHouses }) {
   return (
     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
       {/* Top-right textbox */}
@@ -14,7 +14,7 @@ function OverLay({ addFireMode, setAddFireMode, yearBounds, setYearBounds }) {
       <Slider yearBounds={yearBounds} setYearBounds={setYearBounds} />
 
       {/* Bottom-right button */}
-      <NavBar setAddFireMode={setAddFireMode} />
+      <NavBar setAddFireMode={setAddFireMode} showHouses={showHouses} setShowHouses={setShowHouses} />
     </div>
   );
 }
