@@ -22,6 +22,7 @@ function convertPointsToGeoJSON(pointJson) {
 }
 
 export default function Map() {
+  const gradient = ['#371D32', '#88363F', '#F95952', '#F29890', '#ECD2CA']
   const [yearBounds, setYearBounds] = useState([1950, 2024]);
   const [filteredGeojson, setFilteredGeojson] = useState(filterFiresByYear(caliFiresGeojson, yearBounds));
   const mapContainer = useRef(null);
