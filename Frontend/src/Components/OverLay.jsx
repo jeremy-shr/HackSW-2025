@@ -14,7 +14,7 @@ function OverLay({ addFireMode, setAddFireMode, yearBounds, setYearBounds, showH
       <Slider yearBounds={yearBounds} setYearBounds={setYearBounds} />
 
       {/* Bottom-right button */}
-      <NavBar setAddFireMode={setAddFireMode} showHouses={showHouses} setShowHouses={setShowHouses} />
+      <NavBar setAddFireMode={setAddFireMode} addFireMode={addFireMode} showHouses={showHouses} setShowHouses={setShowHouses}/>
     </div>
   );
 }
