@@ -43,6 +43,7 @@ export default function Map() {
     }
   };
   const [showHouses, setShowHouses] = useState(false); // ✅ Toggle for blue dots
+  const [showHouses, setShowHouses] = useState(false); 
 
   console.log(filteredHouses)
   // California Boundaries
@@ -84,6 +85,7 @@ export default function Map() {
         // Create a custom marker element using the correct path.
         const markerElement = document.createElement("img");
         markerElement.src = "/3d-fire.png"; // Make sure this image is in your public folder
+        markerElement.src = "/3d-fire.png"; 
         markerElement.style.width = "40px";
         markerElement.style.height = "40px";
 
