@@ -7,7 +7,6 @@ function Board() {
   return (
     <>
       <div className="p-3 rounded shadow-lg w-60 text-white pointer-events-auto bg-white/10 backdrop-blur-lg border border-white/20 w-3/5 p-3 rounded-lg pointer-events-auto drop-shadow-xl ">
-        <div className="bg-white p-3 rounded shadow-lg w-60 text-black pointer-events-auto z-20">
           <h1>Wildfire Data</h1>
           <p>
             Visualizing historical fire data from the 1950s to 2025.
@@ -17,7 +16,6 @@ function Board() {
             className="text-white mt-2 shadow-lg hover:underline transition">
             About the data
           </button>
-        </div>
         {openDataModal && (
           <InformationModal
             open={openDataModal}
