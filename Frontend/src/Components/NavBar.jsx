@@ -3,7 +3,8 @@ import { FaFireAlt, FaSearch, FaLayerGroup } from "react-icons/fa";
 import { FaHouseFire } from "react-icons/fa6";
 import FormModal from "./FormModal";
 
-function NavBar({ setAddFireMode, addFireMode }) {
+
+function NavBar({ setAddFireMode, addFireMode, setShowHouses }) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -27,7 +28,9 @@ function NavBar({ setAddFireMode, addFireMode }) {
       </button>
 
       {/* Search Icon */}
-      <button className="flex items-center justify-center w-14 h-14 bg-gray-700 text-white rounded-full shadow-lg hover:bg-gray-800 transition">
+      <button 
+      onClick={() => setShowHouses(prev => !prev)}
+      className="flex items-center justify-center w-14 h-14 bg-gray-700 text-white rounded-full shadow-lg hover:bg-gray-800 transition">
         <FaSearch size={24} />
       </button>
 
